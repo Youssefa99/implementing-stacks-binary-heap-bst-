@@ -14,17 +14,21 @@ char value[100];
 int Ivalue;
 float Fvalue;
 }data;
+
+// Stack
 typedef struct
 {
     Item Arr[100];
     int top;
 } Stack;
 
+// initialize stack
 void init(Stack *s)
 {
     s->top=0;
 }
 
+// check if stack is empty
 int isempty(Stack *s)
 {
     if(s->top<=0)
@@ -37,18 +41,16 @@ int isempty(Stack *s)
         return 0;
     }
 }
-/*
- *
- */
+
+// view element on top of stack
 Item top(Stack *s)
 {
     Item top;
     top = s->Arr[s->top-1];
     return top;
 }
-/*
- *
- */
+
+// pop top element from stack
 Item pop(Stack *s)
 {
 
@@ -59,15 +61,16 @@ Item pop(Stack *s)
     // s->top--;
     return lastchar;
 }
-/*
- *
- */
+
+// push element into stack
 void push(Stack *s, Item val)
 {
 
     s->Arr[s->top] = val;
     s->top++;
 }
+
+// de-allocate stack pointer from memory
 void destroy(Stack *s)
 {
     while(s->top!=-1)
@@ -78,7 +81,7 @@ void destroy(Stack *s)
     free(s);
 }
 
-
+// decide operator precedence in a mathematical equation
 int precedence(char X)
 {
     switch(X)
@@ -97,6 +100,8 @@ int precedence(char X)
         return 3;
     }
 }
+
+// evaluate function
 float fer(char symbol,float op1,float op2)
 {
     //printf("line 97");
