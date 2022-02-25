@@ -101,7 +101,7 @@ int precedence(char X)
     }
 }
 
-// evaluate function
+// evaluate precedence order
 float fer(char symbol,float op1,float op2)
 {
     //printf("line 97");
@@ -125,6 +125,8 @@ float fer(char symbol,float op1,float op2)
         return(0);
     }
 }
+
+// convert to string
 char* createString(char arr[], int size){
 char* str = malloc(size);
 for(int i = 0 ; i < size ; i++){
@@ -133,6 +135,8 @@ for(int i = 0 ; i < size ; i++){
 str[size] = '\0';
 return str;
 }
+
+// Convert mathematical equation from infix expression to postfix expression 
 char* infixToPostfix(char* infix)
 {
     char* str;
@@ -150,31 +154,29 @@ int beforebracket = 0;
 int sign = 0;
 for(i=0;i<strlen(infix);i++)
 {
-    //printf("current: %c\n",infix[i]);
-   // printf("-%d \n", i);
+	// check if number is positive or negative	
     if(infix[i] == '-'){
         if(!isdigit(infix[i-1]) || infix[i-1] == '(' || i - 1 < 0)
                 sign = 1;
     }
+// check if character is followed by brackets 
 if(infix[i+1] == '('){
 beforebracket = 1;
 }
 // if it's a digit add to postfix
     if(isdigit(infix[i])){
-
-      //printf("%c",infix[i]);
-
+	    
 postfix2[j]= '(';
  j++;
+// add expression between the brackets to postfix expression
  while(isdigit(infix[i]) || infix[i] == '.'){
     postfix2[j] = infix[i];
     j++;
     i++;
- //   printf("%d \t",i);
 }
  postfix2[j] = ')';
  j++;
- i = i - 1;
+ i = i - 1; // resume parsing string starting from ')'
  }
 else if(infix[i]==')')
 {
@@ -182,7 +184,6 @@ else if(infix[i]==')')
      while(!isempty(&s)&&top(&s).cData!='(')
           {
 
-   //        printf("%c",pop(&s));
    postfix2[j] = pop(&s).cData;
 	j++;
            }
@@ -192,13 +193,14 @@ postfix2[j] = pop(&s).cData;
 j++;
 }*/
 }
+// if number is negative sorround it with brackets in postfix expression
 else if(infix[i] == '-' && sign == 1){
-        //printf("gowa el if el gededa\n");
     postfix2[j] = '(';
     j++;
     postfix2[j] = infix[i];
     j++;
     i++;
+	// if it's a negative decimal put whole decimal before closing brackets
     while(isdigit(infix[i]) || infix[i] == '.'){
         postfix2[j] = infix[i];
         j++;
@@ -216,20 +218,16 @@ else if(isempty(&s)){
         //printf("\n gowa el empty\n");
 temp.cData = infix[i];
 push(&s,temp);
-//printf("%d %d",precedence(top(&s)),precedence(infix[i]));
 
 }
 else
 {
+	// no special cases: negatives, decimals or brackets
     while(!isempty(&s)&&precedence(top(&s).cData)>=precedence(infix[i])&&top(&s).cData!='('){
-  //          printf("gowa a5er while\n");
-//printf("gowa el while: %d\n",i);
- //        printf("%c",top(&s));
 postfix2[j]=pop(&s).cData;
 j++;         }
 temp.cData = infix[i];
 push(&s,temp);
-//printf("\n %c",temp.cData);
 }
 }
 while(!isempty(&s)){
@@ -242,34 +240,25 @@ while(!isempty(&s)){
     }
 }
 postfix2[j]='\0';
-//printf("\ngowa func el conversion: %s",postfix2);
 str = createString(postfix2,strlen(postfix2));
-//printf("\n gowa el infix to postfix b3d el conversion l char* %s",str);
-        //evaluatePostfix(postfix2);
         return str;
 
 }
+// evaluate postfix expression
 float evaluatePostfix (char* exp)
 {
-   // printf("line 165");
     Stack s;
     init(&s);
     char number[100];
     int j = 0;
-   // printf("line 168");
  Item temp;
  int check;
     float op1,op2,val;
     int i;
     for(i=0; i<strlen(exp); i++)
     {
-        //printf("\n%d",i);
-      // printf("\n%c",exp[i]);
-       // printf("line 173");
+	    // handle brackets in postfix expression
         if(exp[i] == '('){
-                //printf("line 176");
-              //  printf("\n%c",exp[i]);
-                //temp.cData = exp[i];
                 i++;
                 while(exp[i] != ')'){
                   number[j] = exp[i];
@@ -279,8 +268,6 @@ float evaluatePostfix (char* exp)
                 number[j] = '\0';
                 j++;
             temp.fData = atof(number);
-      //      printf("\n %f \n",temp.fData);
-               // printf("\n%f",temp.fData);
             push(&s,temp);
            j = 0;
            strcpy(number,"");
@@ -289,10 +276,7 @@ float evaluatePostfix (char* exp)
         }
         else
         {
-            //printf("\n%f",top(&s).fData);
             op2 = pop(&s).fData;
-
-//            printf("\n%f",op2);
             op1 = pop(&s).fData;
 
             val = fer(exp[i],op1,op2);
@@ -303,12 +287,9 @@ push(&s,temp);
 
         }
     }
-   //val=pop(&s).fData;
-    //printf("\n%.1f",val);
-
-    //printf("\n%d",val);
     return val;
 }
+// compare strings if identical or not
 int compareStrings(char string1[],char string2[]){
 int count1 = 0;
 int count2 = 0;
@@ -316,13 +297,11 @@ int check = 0;
 for(int i = 0 ; i < strlen(string1) ; i++){
     count1++;
 }
-//printf("gowa func compare:\n");
-//printf("%d",count1);
 
 for(int j = 0 ; j < strlen(string2) ; j++){
     count2++;
 }
-//printf("\n%d",count2);
+// if not same size then not equal without checking for values
 if(count1 != count2 - 1)
     return -1;
 for(int k = 0 ; k < strlen(string1) ; k++){
@@ -336,14 +315,15 @@ else{
 }
 }
 
+// copy string
 char* copyString(char* string,int size){
-    //printf("gowa func el copy\n");
 char* str;
 for(int i = 0 ; i < size ; i++){
     str[i] = string[i];
 }
 return str;
 }
+
 char* replaceVariables(data d[],char arr[],int size){
   int end;
 int parse = 0;
